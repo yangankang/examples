@@ -1,4 +1,4 @@
-from reptile.download_http_proxy import ProxyCrawler
+from download_http_proxy import ProxyCrawler
 
 proxy = ProxyCrawler()
 proxy.refresh_db()

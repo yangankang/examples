@@ -73,6 +73,8 @@ class ProxyData:
         except Exception as e:
             print(e)
             return 0
+        finally:
+            conn.close()
 
     def is_valid_proxy(self, protocol="http", ip=None, port=None):
         try:
@@ -94,8 +96,10 @@ class ProxyData:
             return False
 
     def proxy_request(self, url, protocol="http", ip=None, port=None, encode="utf-8"):
+        if not protocol:
+            protocol = "http"
         socket.setdefaulttimeout(10)
-        proxy = {protocol: ip + ":" + str(port)}
+        proxy = {protocol.lower(): ip + ":" + str(port)}
         proxy_handler = request.ProxyHandler(proxy)
         opener = request.build_opener(proxy_handler)
         user_agent = self.random_user_agent()['User-Agent']
@@ -104,3 +108,16 @@ class ProxyData:
         response = request.urlopen(url=url)
         # html = response.read().decode("utf-8")
         return response
+
+    def get_random_ip(self):
+        try:
+            conn = sqlite3.connect(self.db_name)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM t_ips ORDER BY RANDOM() LIMIT 1")
+            c = cursor.fetchone()
+            return c
+        except Exception as e:
+            print(e)
+            return None
+        finally:
+            conn.close()

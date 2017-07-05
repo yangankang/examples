@@ -3,13 +3,12 @@ from bs4 import BeautifulSoup
 import time
 import logging
 
-from reptile.http_proxy_db import ProxyData
+from http_proxy_db import ProxyData
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename='myapp.log',
-                    filemode='w')
+                    filename='myapp.log')
 
 
 class ProxyCrawler(ProxyData):
@@ -17,19 +16,36 @@ class ProxyCrawler(ProxyData):
 
     def refresh_db(self):
         # if self.count() < 100:
-        i = 1
+        i = 185
         logging.info("开始执行获取代理IP")
-        while (self.get_resolve_data(page=i)):
+        while self.get_resolve_data(page=i, useAgent=False):
+            print("第" + str(i) + "次抓取,共" + str(self.count()) + "条,等待10秒后重新抓取...")
+            logging.info("第" + str(i) + "次抓取,共" + str(self.count()) + "条,等待10秒后重新抓取...")
             time.sleep(10)
             logging.info("第" + str(i) + "次执行获取代理IP")
             i = i + 1
 
-    def get_resolve_data(self, page=1):
+    def get_resolve_data(self, page=1, useAgent=False):
         r = self.url + str(page)
-        h = self.random_user_agent()
 
-        r = request.Request(url=r, headers=h)
-        response = request.urlopen(r)
+        if useAgent:
+            # c = self.get_random_ip()
+            ip = "134.17.24.127"  # c[1]
+            port = "8080"  # c[2]
+            protocol = "http"  # c[4]
+            try:
+                response = self.proxy_request(r, protocol, ip, port)
+            except Exception as e:
+                print(protocol.lower() + "://" + ip + ":" + port + "Net Error : " + str(e))
+                time.sleep(3)
+                print("开始重新请求...")
+                self.get_resolve_data(page, useAgent)
+                return True
+        else:
+            h = self.random_user_agent()
+            r = request.Request(url=r, headers=h)
+            response = request.urlopen(r)
+
         if response.code == 200:
 
             html = response.read()
@@ -38,7 +54,8 @@ class ProxyCrawler(ProxyData):
             self.save_ips(ds)
 
             print("保存第" + str(page) + "页数据:", ds)
-            logging.info("保存第" + str(page) + "页数据")
+            logging.info("保存第" + str(page) + "页数据:", ds)
+            # logging.info("保存第" + str(page) + "页数据")
 
             return True
         else:
