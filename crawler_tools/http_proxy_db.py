@@ -95,10 +95,10 @@ class ProxyData:
         except Exception as e:
             return False
 
-    def proxy_request(self, url, protocol="http", ip=None, port=None, encode="utf-8"):
+    def proxy_request(self, url, protocol="http", ip=None, port=None, encode="utf-8", timeout=10):
         if not protocol:
             protocol = "http"
-        socket.setdefaulttimeout(10)
+        socket.setdefaulttimeout(timeout)
         proxy = {protocol.lower(): ip + ":" + str(port)}
         proxy_handler = request.ProxyHandler(proxy)
         opener = request.build_opener(proxy_handler)
