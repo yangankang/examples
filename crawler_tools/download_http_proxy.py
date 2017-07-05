@@ -16,7 +16,7 @@ class ProxyCrawler(ProxyData):
 
     def refresh_db(self):
         # if self.count() < 100:
-        i = 185
+        i = 351
         logging.info("开始执行获取代理IP")
         while self.get_resolve_data(page=i, useAgent=False):
             print("第" + str(i) + "次抓取,共" + str(self.count()) + "条,等待10秒后重新抓取...")
