@@ -12,8 +12,10 @@ class ScanProxyIp(ProxyData, RandomIpAddr):
                 try:
                     response = self.proxy_request("http://www.xicidaili.com", protocol=ip["protocol"], ip=ip["ip"],
                                                   port=int(ip["port"]),
-                                                  timeout=2)
-                    if response.code == 200 and telnetlib.Telnet(ip["ip"], port=int(ip["port"]), timeout=2):
+                                                  timeout=1)
+                    if response.code == 200:
+                        tn = telnetlib.Telnet(ip["ip"], port=int(ip["port"]), timeout=1)
+                        print(str(tn))
                         print(response.read().decode("utf-8"))
                         print("是一个有效的代理" + str(ip))
                 except Exception as e:
