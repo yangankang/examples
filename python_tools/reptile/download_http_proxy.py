@@ -16,13 +16,13 @@ class ProxyCrawler(ProxyData):
     url = "http://www.xicidaili.com/nn/"
 
     def refresh_db(self):
-        if self.count() < 100:
-            i = 1
-            logging.info("开始执行获取代理IP")
-            while (self.get_resolve_data(page=i)):
-                time.sleep(10)
-                logging.info("第" + str(i) + "次执行获取代理IP")
-                i = i + 1
+        # if self.count() < 100:
+        i = 1
+        logging.info("开始执行获取代理IP")
+        while (self.get_resolve_data(page=i)):
+            time.sleep(10)
+            logging.info("第" + str(i) + "次执行获取代理IP")
+            i = i + 1
 
     def get_resolve_data(self, page=1):
         r = self.url + str(page)
