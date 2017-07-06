@@ -78,6 +78,13 @@ class GameCanvas(QLabel):
             rect.show()
 
             return self.item_data[d["i"]][d["j"]]
+        else:
+            reply = QMessageBox.question(self.parent, '提示信息',
+                                         "您已经输了，是否重新开始?", QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                print("OK")
+            else:
+                print("NO")
         return None
 
     def keyPressEvent(self, QKeyEvent):
@@ -91,12 +98,16 @@ class GameCanvas(QLabel):
             self.reset_rect(4)
 
     def add_rect(self, i, j, k):
-        print("")
-        # if self.item_data[i][k]["Number"] == self.item_data[i][j]["Number"]:
-        #     self.item_data[i][k]["Number"] = self.item_data[i][k]["Number"] + \
-        #                                      self.item_data[i][j]["Number"]
-        #     self.item_data[i][j]["Item"].destroy()
-        #     self.item_data[i][j] = {"Item": None, "Number": 0}
+        if self.item_data[i][k]["Number"] == self.item_data[i][j]["Number"]:
+            self.item_data[i][k]["Number"] = self.item_data[i][k]["Number"] + \
+                                             self.item_data[i][j]["Number"]
+            del_item = self.item_data[i][j]["Item"]
+            new_item = self.item_data[i][k]["Item"]
+            del del_item
+            ds = new_item.ds
+            ds["num"] = self.item_data[i][k]["Number"]
+            new_item.refresh_ds(ds)
+            self.item_data[i][j] = {"Item": None, "Number": 0}
 
     def reset_rect(self, direction):
 
