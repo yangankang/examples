@@ -1,5 +1,7 @@
 import random
 
+'''随机生成一个IP地址'''
+
 
 class RandomIpAddr:
     common_ports = [80, 9000, 8080, 8118, 8081, 3128, 8123, 808, 8889, 82, 8998, 1080, 53281,

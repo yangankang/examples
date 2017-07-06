@@ -5,10 +5,17 @@ import logging
 
 from http_proxy_db import ProxyData
 
+'''
+设置日志的类型
+'''
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',
                     filename='myapp.log')
+
+'''
+抓取url地址的ip列表，并且保存到数据库
+'''
 
 
 class ProxyCrawler(ProxyData):

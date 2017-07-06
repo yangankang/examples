@@ -2,6 +2,10 @@ from http_proxy_db import ProxyData
 from random_ip_addr import RandomIpAddr
 import telnetlib
 
+'''
+扫描随机IP是否有代理服务
+'''
+
 
 class ScanProxyIp(ProxyData, RandomIpAddr):
     def scan(self):

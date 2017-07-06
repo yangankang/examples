@@ -3,6 +3,11 @@ import random
 from urllib import request
 import socket
 
+'''
+保存ip地址到数据库
+并提供常用的头信息
+'''
+
 
 class ProxyData:
     user_agent_headers = [
