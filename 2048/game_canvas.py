@@ -61,21 +61,24 @@ class GameCanvas(QLabel):
                 if self.item_data[i][j]["Number"] == 0:
                     zero_ds.append({"i": i, "j": j})
 
-        rnd = int(random.uniform(0, len(zero_ds)))
-        k = int(random.uniform(0, 10))
-        number = 2
-        if k == 2 or k == 10:
-            number = 4
-        d = zero_ds[rnd]
-        d["num"] = number
-        d["x"] = self.item_bg_pos[d["i"]][d["j"]]["x"]
-        d["y"] = self.item_bg_pos[d["i"]][d["j"]]["y"]
+        if len(zero_ds) > 0:
+            rnd = int(random.uniform(0, len(zero_ds)))
+            k = int(random.uniform(0, 10))
+            number = 2
+            if k == 2 or k == 10:
+                number = 4
+            d = zero_ds[rnd]
+            d["num"] = number
+            d["x"] = self.item_bg_pos[d["i"]][d["j"]]["x"]
+            d["y"] = self.item_bg_pos[d["i"]][d["j"]]["y"]
 
-        rect = NumberRect(self.parent, self.rect_width, d)
-        self.item_data[d["i"]][d["j"]]["Number"] = number
-        self.item_data[d["i"]][d["j"]]["Item"] = rect
+            rect = NumberRect(self.parent, self.rect_width, d)
+            self.item_data[d["i"]][d["j"]]["Number"] = number
+            self.item_data[d["i"]][d["j"]]["Item"] = rect
+            rect.show()
 
-        return self.item_data[d["i"]][d["j"]]
+            return self.item_data[d["i"]][d["j"]]
+        return None
 
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == Qt.Key_Up:
@@ -88,11 +91,12 @@ class GameCanvas(QLabel):
             self.reset_rect(4)
 
     def add_rect(self, i, j, k):
-        if self.item_data[i][k]["Number"] == self.item_data[i][j]["Number"]:
-            self.item_data[i][k]["Number"] = self.item_data[i][k]["Number"] + \
-                                             self.item_data[i][j]["Number"]
-            self.item_data[i][j]["Item"].destroy()
-            self.item_data[i][j] = {"Item": None, "Number": 0}
+        print("")
+        # if self.item_data[i][k]["Number"] == self.item_data[i][j]["Number"]:
+        #     self.item_data[i][k]["Number"] = self.item_data[i][k]["Number"] + \
+        #                                      self.item_data[i][j]["Number"]
+        #     self.item_data[i][j]["Item"].destroy()
+        #     self.item_data[i][j] = {"Item": None, "Number": 0}
 
     def reset_rect(self, direction):
 
@@ -100,45 +104,49 @@ class GameCanvas(QLabel):
             for j in range(0, 4):
                 if direction == 3:
                     if self.item_data[i][j]["Number"] != 0:
-                        for k in range(0, j):
-                            if self.item_data[i][k]["Number"] == 0:
-                                swap = self.item_data[i][k]
-                                self.item_data[i][k] = self.item_data[i][j]
-                                self.item_data[i][j] = swap
-                                break
-                            else:
-                                self.add_rect(i, j, k)
+                        if j != 0:
+                            for k in range(0, j):
+                                if self.item_data[i][k]["Number"] == 0:
+                                    swap = self.item_data[i][k]
+                                    self.item_data[i][k] = self.item_data[i][j]
+                                    self.item_data[i][j] = swap
+                                    break
+                                else:
+                                    self.add_rect(i, j, k)
                 if direction == 4:
                     if self.item_data[i][3 - j]["Number"] != 0:
-                        for k in range(3, 3 - j, -1):
-                            if self.item_data[i][k]["Number"] == 0:
-                                swap = self.item_data[i][k]
-                                self.item_data[i][k] = self.item_data[i][3 - j]
-                                self.item_data[i][3 - j] = swap
-                                break
-                            else:
-                                self.add_rect(i, 3 - j, k)
+                        if 3 - j != 3:
+                            for k in range(3, 3 - j, -1):
+                                if self.item_data[i][k]["Number"] == 0:
+                                    swap = self.item_data[i][k]
+                                    self.item_data[i][k] = self.item_data[i][3 - j]
+                                    self.item_data[i][3 - j] = swap
+                                    break
+                                else:
+                                    self.add_rect(i, 3 - j, k)
 
                 if direction == 1:
                     if self.item_data[j][i]["Number"] != 0:
-                        for k in range(0, j):
-                            if self.item_data[k][i]["Number"] == 0:
-                                swap = self.item_data[k][i]
-                                self.item_data[k][i] = self.item_data[j][i]
-                                self.item_data[j][i] = swap
-                                break
-                            else:
-                                self.add_rect(j, i, k)
+                        if j != 0:
+                            for k in range(0, j):
+                                if self.item_data[k][i]["Number"] == 0:
+                                    swap = self.item_data[k][i]
+                                    self.item_data[k][i] = self.item_data[j][i]
+                                    self.item_data[j][i] = swap
+                                    break
+                                else:
+                                    self.add_rect(j, i, k)
                 if direction == 2:
                     if self.item_data[3 - j][i]["Number"] != 0:
-                        for k in range(3, 3 - j, -1):
-                            if self.item_data[k][i]["Number"] == 0:
-                                swap = self.item_data[k][i]
-                                self.item_data[k][i] = self.item_data[3 - j][i]
-                                self.item_data[3 - j][i] = swap
-                                break
-                        else:
-                            self.add_rect(3 - j, i, k)
+                        if 3 - j != 3:
+                            for k in range(3, 3 - j, -1):
+                                if self.item_data[k][i]["Number"] == 0:
+                                    swap = self.item_data[k][i]
+                                    self.item_data[k][i] = self.item_data[3 - j][i]
+                                    self.item_data[3 - j][i] = swap
+                                    break
+                            else:
+                                self.add_rect(3 - j, i, k)
 
         self.redraw_rect()
         self.random_rect_item()
