@@ -71,8 +71,9 @@ class GameCanvas(QLabel):
         d["x"] = self.item_bg_pos[d["i"]][d["j"]]["x"]
         d["y"] = self.item_bg_pos[d["i"]][d["j"]]["y"]
 
+        rect = NumberRect(self.parent, self.rect_width, d)
         self.item_data[d["i"]][d["j"]]["Number"] = number
-        self.item_data[d["i"]][d["j"]]["Item"] = NumberRect(self.parent, self.rect_width, d)
+        self.item_data[d["i"]][d["j"]]["Item"] = rect
 
         return self.item_data[d["i"]][d["j"]]
 
@@ -86,6 +87,13 @@ class GameCanvas(QLabel):
         elif QKeyEvent.key() == Qt.Key_Right:
             self.reset_rect(4)
 
+    def add_rect(self, i, j, k):
+        if self.item_data[i][k]["Number"] == self.item_data[i][j]["Number"]:
+            self.item_data[i][k]["Number"] = self.item_data[i][k]["Number"] + \
+                                             self.item_data[i][j]["Number"]
+            self.item_data[i][j]["Item"].destroy()
+            self.item_data[i][j] = {"Item": None, "Number": 0}
+
     def reset_rect(self, direction):
 
         for i in range(0, 4):
@@ -98,6 +106,8 @@ class GameCanvas(QLabel):
                                 self.item_data[i][k] = self.item_data[i][j]
                                 self.item_data[i][j] = swap
                                 break
+                            else:
+                                self.add_rect(i, j, k)
                 if direction == 4:
                     if self.item_data[i][3 - j]["Number"] != 0:
                         for k in range(3, 3 - j, -1):
@@ -106,6 +116,9 @@ class GameCanvas(QLabel):
                                 self.item_data[i][k] = self.item_data[i][3 - j]
                                 self.item_data[i][3 - j] = swap
                                 break
+                            else:
+                                self.add_rect(i, 3 - j, k)
+
                 if direction == 1:
                     if self.item_data[j][i]["Number"] != 0:
                         for k in range(0, j):
@@ -114,6 +127,8 @@ class GameCanvas(QLabel):
                                 self.item_data[k][i] = self.item_data[j][i]
                                 self.item_data[j][i] = swap
                                 break
+                            else:
+                                self.add_rect(j, i, k)
                 if direction == 2:
                     if self.item_data[3 - j][i]["Number"] != 0:
                         for k in range(3, 3 - j, -1):
@@ -122,8 +137,11 @@ class GameCanvas(QLabel):
                                 self.item_data[k][i] = self.item_data[3 - j][i]
                                 self.item_data[3 - j][i] = swap
                                 break
+                        else:
+                            self.add_rect(3 - j, i, k)
 
         self.redraw_rect()
+        self.random_rect_item()
 
     def redraw_rect(self):
         for i in range(0, 4):
