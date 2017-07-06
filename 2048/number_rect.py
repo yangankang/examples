@@ -27,6 +27,7 @@ class NumberRect(QLabel):
         self.refresh_ds(ds)
 
     def refresh_ds(self, ds):
+        self.ds = ds
         self.setText(str(ds["num"]))
         self.move(ds["x"], ds["y"])
         color = self.color_dict[str(ds["num"])]
