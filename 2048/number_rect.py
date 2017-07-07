@@ -33,6 +33,11 @@ class NumberRect(QLabel):
         color = self.color_dict[str(ds["num"])]
         font_color = self.font_color_dict[str(ds["num"])]
         self.setStyleSheet("QLabel{background-color:" + color + ";color:" + font_color + ";border-radius:3}")
+        font_size = 55
+        if 100 <= ds["num"] <= 999: font_size = 40
+        if 1000 <= ds["num"] <= 9999: font_size = 30
+        if 10000 <= ds["num"] <= 99999: font_size = 20
+        self.setFont(QFont("\"Clear Sans\", \"Helvetica Neue\", Arial, sans-serif", font_size, QFont.Bold))
 
     def move_animation(self):
         self.animation = QPropertyAnimation(self, "pos".encode())

@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from game_calculate import GameCalculate
 from number_rect import NumberRect
 
 
@@ -97,81 +98,40 @@ class GameCanvas(QLabel):
         elif QKeyEvent.key() == Qt.Key_Right:
             self.reset_rect(4)
 
-    def add_rect(self, a, b):
-        if a["Number"] == b["Number"]:
-            a["Number"] = a["Number"] + b["Number"]
-            del_item = b["Item"]
-            new_item = a["Item"]
-            if del_item:
-                del_item.hide()
-                del del_item
-            if new_item:
-                ds = new_item.ds
-                ds["num"] = a["Number"]
-                new_item.refresh_ds(ds)
-            b["Item"] = None
-
     def reset_rect(self, direction):
-
-        for i in range(0, 4):
-            for j in range(0, 4):
-                if direction == 3:
-                    if self.item_data[i][j]["Number"] != 0:
-                        if j != 0:
-                            for k in range(0, j):
-                                if self.item_data[i][k]["Number"] == 0:
-                                    swap = self.item_data[i][k]
-                                    self.item_data[i][k] = self.item_data[i][j]
-                                    self.item_data[i][j] = swap
-                                    break
-                                else:
-                                    self.add_rect(self.item_data[i][k], self.item_data[i][j])
-                if direction == 4:
-                    if self.item_data[i][3 - j]["Number"] != 0:
-                        if 3 - j != 3:
-                            for k in range(3, 3 - j, -1):
-                                if self.item_data[i][k]["Number"] == 0:
-                                    swap = self.item_data[i][k]
-                                    self.item_data[i][k] = self.item_data[i][3 - j]
-                                    self.item_data[i][3 - j] = swap
-                                    break
-                                else:
-                                    self.add_rect(self.item_data[i][k], self.item_data[i][3 - j])
-
-                if direction == 1:
-                    if self.item_data[j][i]["Number"] != 0:
-                        if j != 0:
-                            for k in range(0, j):
-                                if self.item_data[k][i]["Number"] == 0:
-                                    swap = self.item_data[k][i]
-                                    self.item_data[k][i] = self.item_data[j][i]
-                                    self.item_data[j][i] = swap
-                                    break
-                                else:
-                                    self.add_rect(self.item_data[k][i], self.item_data[j][i])
-                if direction == 2:
-                    if self.item_data[3 - j][i]["Number"] != 0:
-                        if 3 - j != 3:
-                            for k in range(3, 3 - j, -1):
-                                if self.item_data[k][i]["Number"] == 0:
-                                    swap = self.item_data[k][i]
-                                    self.item_data[k][i] = self.item_data[3 - j][i]
-                                    self.item_data[3 - j][i] = swap
-                                    break
-                            else:
-                                self.add_rect(self.item_data[k][i], self.item_data[3 - j][i])
-
-        self.redraw_rect()
-        self.random_rect_item()
-
-    def redraw_rect(self):
+        print("方向:" + str(direction))
+        items = []
         for i in range(0, 4):
             for j in range(0, 4):
                 item = self.item_data[i][j]["Item"]
                 if item:
+                    items.append(item)
+
+        calculate = GameCalculate(self.item_data)
+        calculate.calculate(direction)
+        self.item_data = calculate.get_data()
+
+        for d in self.item_data:
+            print(d)
+        for p in self.item_bg_pos:
+            print(p)
+
+        self.redraw_rect(items)
+        self.random_rect_item()
+
+    def redraw_rect(self, items):
+        for i in range(0, 4):
+            for j in range(0, 4):
+                item = self.item_data[i][j]["Item"]
+                if item:
+                    items.remove(item)
                     x = self.item_bg_pos[i][j]["x"]
                     y = self.item_bg_pos[i][j]["y"]
                     ds = item.ds
                     ds["x"] = x
                     ds["y"] = y
+                    ds["num"] = self.item_data[i][j]["Number"]
                     item.refresh_ds(ds)
+        for k in items:
+            if k: k.hide()
+        del items
