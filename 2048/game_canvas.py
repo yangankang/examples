@@ -117,6 +117,7 @@ class GameCanvas(QLabel):
             print(p)
 
         self.redraw_rect(items)
+        self.check_is_win()
         self.random_rect_item()
 
     def redraw_rect(self, items):
@@ -135,3 +136,15 @@ class GameCanvas(QLabel):
         for k in items:
             if k: k.hide()
         del items
+
+    def check_is_win(self):
+        for i in range(0, 4):
+            for j in range(0, 4):
+                item = self.item_data[i][j]["Item"]
+                if item and item.ds["num"] == 2048:
+                    reply = QMessageBox.question(self.parent, '提示信息',
+                                                 "真牛逼，你已经赢了是否继续往上挑战？", QMessageBox.Yes, QMessageBox.No)
+                    if reply == QMessageBox.Yes:
+                        print("OK")
+                    else:
+                        print("NO")
