@@ -2,6 +2,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QDesktopWidget>
 #include "MainDialog.h"
+#include "HtmlFinder.h"
 
 
 int main(int argc, char *argv[]) {
@@ -9,5 +10,8 @@ int main(int argc, char *argv[]) {
     MainDialog d;
 
     d.hide();
+
+    HtmlFinder hf("https://www.w3.org/TR/REC-CSS2/selector.html");
+
     return a.exec();
 }

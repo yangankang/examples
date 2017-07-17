@@ -8,9 +8,11 @@
 
 #include <QtCore/QString>
 #include <QtXml/QtXml>
+#include <QtWebKitWidgets/QtWebKitWidgets>
 
-class HtmlFinder {
+class HtmlFinder : public QObject {
 
+Q_OBJECT
 public:
     explicit HtmlFinder(QString string);
 
@@ -18,13 +20,21 @@ public:
 
     QString getText();
 
-    HtmlFinder finder(QString path);
+    QWebElementCollection findAll(const QString &selectorQuery);
+
+    QWebElement findFirst(const QString &selectorQuery);
 
 private:
+    QWebView *view;
     QString text;
-    QDomDocument document;
+    QString url;
+    QWebElement element;
 
     void parse();
+
+public slots:
+
+    void loadFinished(bool);
 };
 
 
