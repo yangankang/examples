@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
 
     d.hide();
 
-    HtmlFinder hf("https://www.w3.org/TR/REC-CSS2/selector.html");
+    HtmlFinder *hf = new HtmlFinder(QUrl("http://blog.csdn.net/apple1985507"));
 
     return a.exec();
 }

@@ -14,11 +14,15 @@ class HtmlFinder : public QObject {
 
 Q_OBJECT
 public:
-    explicit HtmlFinder(QString string);
+    explicit HtmlFinder(QUrl url);
+
+    explicit HtmlFinder(QString text);
 
     ~HtmlFinder();
 
     QString getText();
+
+    QString loadText(QUrl url);
 
     QWebElementCollection findAll(const QString &selectorQuery);
 
@@ -27,14 +31,19 @@ public:
 private:
     QWebView *view;
     QString text;
-    QString url;
+    QUrl url;
     QWebElement element;
 
     void parse();
 
 public slots:
 
-    void loadFinished(bool);
+    void loadFinished(QNetworkReply *reply);
+
+signals:
+
+    void finished(HtmlFinder *hf);
+
 };
 
 

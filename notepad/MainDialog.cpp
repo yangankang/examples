@@ -7,6 +7,8 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
 #include <QtCore/QCoreApplication>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include "MainDialog.h"
 
 
@@ -16,9 +18,11 @@ MainDialog::MainDialog() {
     setWindowTitle("Hello QT Window");
     resize(500, 300);
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+//    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint);
 
     setSystemTrayIcon();
+    setWindowHeader();
 }
 
 MainDialog::~MainDialog() {
@@ -49,6 +53,20 @@ void MainDialog::setSystemTrayIcon() {
     connect(systemTrayIcon, &QSystemTrayIcon::activated, this, &MainDialog::showAndFront);
 }
 
+void MainDialog::setWindowHeader() {
+    QHBoxLayout *lyt = new QHBoxLayout();
+    QWidget *w = new QWidget(this);
+    QPalette palette;
+    palette.setColor(QPalette::Background, QColor(131, 25, 25));
+    w->setPalette(palette);
+    w->setAutoFillBackground(true);
+    lyt->addWidget(w);
+//    this->setLayout(lyt);
+
+    QLabel *label = new QLabel(this);
+    label->setText("<img src='D:\\WorkSpace\\StudyProject\\examples\\notepad\\imgs\\exit.png'>");
+}
+
 void MainDialog::exitApp() {
     QCoreApplication::exit(1);
 }
@@ -58,8 +76,13 @@ void MainDialog::showAndFront(QSystemTrayIcon::ActivationReason reason) {
         //this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
         if (this->isHidden()) {
             this->show();
+            this->activateWindow();
         } else {
             this->hide();
         }
+    }
+
+    if (reason == QSystemTrayIcon::Trigger) {
+        this->activateWindow();
     }
 }

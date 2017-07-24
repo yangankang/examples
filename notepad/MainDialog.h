@@ -21,6 +21,8 @@ public:
 
     void setSystemTrayIcon();
 
+    void setWindowHeader();
+
 public slots:
 
     void exitApp();

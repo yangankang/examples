@@ -4,8 +4,14 @@
 
 #include "HtmlFinder.h"
 
-HtmlFinder::HtmlFinder(QString string) {
-    this->url = string;
+HtmlFinder::HtmlFinder(QUrl url) {
+    this->url = url;
+    this->parse();
+    this->loadText(this->url);
+}
+
+HtmlFinder::HtmlFinder(QString text) {
+    this->text = text;
     this->parse();
 }
 
@@ -25,19 +31,32 @@ QString HtmlFinder::getText() {
     return this->text;
 }
 
+QString HtmlFinder::loadText(QUrl url) {
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply * )),
+            this, SLOT(loadFinished(QNetworkReply * )));
+
+    manager->get(QNetworkRequest(url));
+}
+
 void HtmlFinder::parse() {
     this->view = new QWebView();
-    this->view->load(QUrl(this->url));
-    connect(this->view, &QWebView::loadFinished, this, &HtmlFinder::loadFinished);
+
+    if (!this->text.isEmpty()) {
+        this->view->setHtml(this->text);
+        this->element = this->view->page()->mainFrame()->documentElement();
+    }
 
 }
 
-void HtmlFinder::loadFinished(bool) {
-    this->text = this->view->page()->mainFrame()->toHtml();
+void HtmlFinder::loadFinished(QNetworkReply *reply) {
+    QByteArray dt = reply->readAll();
+    this->text = QString(dt);
     this->element = this->view->page()->mainFrame()->documentElement();
-    QWebElementCollection ec = this->findAll("h3");
+    emit finished(this);
+    /*QWebElementCollection ec = this->findAll("h3");
     QList<QWebElement> el = ec.toList();
     for (QWebElement e:el) {
         qDebug() << e.toOuterXml();
-    }
+    }*/
 }
